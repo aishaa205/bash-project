@@ -1,0 +1,116 @@
+#!/usr/bin/bash
+
+
+
+array=( `ls` )
+PS3="Please Choose the table you want to select from:"
+
+
+select choice in ${array[*]}
+do 
+   if [ $REPLY -gt ${#array[*]} ]
+  then 
+    echo $REPLY not in menue
+    continue
+   else
+    table_name=${array[${REPLY}-1]} 2>/dev/null  # array start from 0 f lazem 3l4an my3ml4 delete lly ba3do 
+     echo 'you are now inside '${array[${REPLY}-1]}' table' 
+
+     break 
+   fi
+done
+
+
+col_types=$(awk -F: '{print $2}' .$table_name"_metadata" 2> /dev/null)
+col_names=$(awk -F: '{print $1}' .$table_name"_metadata" 2> /dev/null)
+names=($col_names)
+types=($col_types)
+
+
+echo "Column Names: $col_names"
+echo "Column Types: $col_types"
+echo "Names Array: ${names[@]}"
+echo "Types Array: ${types[@]}"
+echo "Number of Names: ${#names[@]}"
+
+select choice in  select_all select_specific_row select_col exit 
+do
+case $choice in
+select_all )
+    echo ${names[@]}
+    cat $table_name
+   # awk -F: '{print $0}' $table_name
+    ;;
+select_specific_row )
+
+row=()
+echo $row
+num_lines=$(wc -l <  $table_name)  
+#echo $num_lines
+for ((i=1; i<=$num_lines; i++))
+do
+  row=$(sed -n "$i p" $table_name)
+  rows+=("$row")
+done
+
+
+#select row as option
+select row in "${rows[@]}"
+do
+    if [ $REPLY -gt ${#rows[@]} ]
+    then
+         echo "$REPLY not in menu"
+          continue
+    else
+         selected_row=${rows[$REPLY-1]} # subtract 1 to get the correct index
+         echo "You selected the following row:"
+         echo ${names[@]}
+         echo "$selected_row"
+         break
+    fi
+done
+  ;;
+    
+select_col )
+   select col_name in "${names[@]}"
+   do
+       if [ $REPLY -gt ${#names[@]} ]
+        then
+            echo "$REPLY not in menu"
+            continue
+        else
+            selected_col=${names[$REPLY-1]} # subtract 1 to get the correct index
+            echo "You selected the following column:"
+            echo "$selected_col"
+
+            #position of the selected column
+            col_pos=0
+            for ((i=0; i<${#names[@]}; i++))
+            do
+                if [ "${names[$i]}" == "$selected_col" ]
+                then
+                    col_pos=$((i+1)) 
+                fi
+            done
+
+            # display all values in selected column
+            cut -d: -f$col_pos $table_name
+
+            break
+        fi
+
+   done
+   ;;
+exit )
+
+    #feh error 3ayzeeen nhandeloooo 
+    source ../../SW/connect_db   
+    ;;
+esac
+done
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+
+
+echo ===============exsist tables===============
+
+ls
+#case check i no tables if exsist may redirect to another place 
+
+#   if (`ls` == null )
+#      echo no tables to list 
+#      continue
+#   else
+#     ls
+#   fi     

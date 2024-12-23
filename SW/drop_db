@@ -1,0 +1,53 @@
+#!/usr/bin/bash
+
+ cd ../DATA_BASE_CREATED
+
+
+#  ls -F | grep / | tr / " "
+
+
+# while true
+# do 
+#  echo "choose the database you want to drop"
+#  read drop_name_db 
+
+#  case $drop_name_db in
+#  "")
+#     echo "you didn't enter database name ,please enter database name!"
+#      continue
+#    ;;
+#  $drop_name_db )
+
+#    if [find   $drop_name_db  'ls -F | grep / ' ] #list files then search  [&> ~/../../dev/null]
+#       then 
+#         rm -r $drop_name_db
+#         break
+#       else
+#        echo "database dosen't exist"
+#        continue
+#     fi
+#    ;;
+#  esac
+# done
+
+
+echo "choose the database you want to drop"
+echo 
+
+array=(`ls -F | grep / | tr / " "`)
+
+select choice in ${array[*]}
+do 
+  if [ $REPLY -gt ${#array[*]} ]
+  then 
+    echo $REPLY not in menue
+    continue
+   else
+     rm -r ${array[${REPLY}-1]} # array start from 0f lazem 3l4an my3ml4 delete lly ba3do 
+     echo the database is deleted successfully
+     break 
+
+   fi
+done     
+
+ cd -  2> /dev/null

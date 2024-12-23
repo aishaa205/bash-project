@@ -1,0 +1,57 @@
+#!/usr/bin/bash
+
+# store feehh
+cd ../DATA_BASE_CREATED
+
+while true
+do 
+echo "please enter your database name" 
+read name_db 
+# matnse4 case can't start with speical character!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+case $name_db in
+ # is empty
+ "" )
+  echo "database name can't be empty"
+   continue
+   ;;
+
+    #condition da m4 48al kways 8er f el nos bs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+  *[[:space:]] | *[[:space:]]* | [[:space:]]*   )
+   echo "database name can't contain space"
+    continue
+   ;;
+  [0-9]* )
+  echo "database name can't start with number"
+  continue
+   ;;
+
+
+  # 8lat ya shoshoo [;-#-!-@-%-^-&-*-(-)-=-_-+-~]*[a-zA-Z_0-9])
+  *[;\#\-\!\-\@\-\%\-\^\-\&\-\*\-\(\)\-\-\=\-\_\+\-\~]*)
+  echo "database name can't start with speacial characters "
+  continue
+   ;;
+
+   # 3ayza a5leha 2 cases speaical char w elba2y 
+  *[a-zA-Z]*[a-zA-Z_0-9] | [a-zA-Z_]) 
+      if  [ -e $name_db ]
+      then 
+         echo "the database is already exist"
+         continue 
+      else
+    # momken 22ol do you want to  edit the exisiting db 
+          mkdir $name_db 
+          break 
+      fi
+      ;;
+   *)
+    echo "database name is invalid"
+     continue 
+     ;; 
+esac
+done
+# read -p "please enter your database name" $name_db 
+
+# ( find  $name_db `ls -F | grep /` &> ~/../../dev/null ) #list files then search
+
+cd - 2> /dev/null

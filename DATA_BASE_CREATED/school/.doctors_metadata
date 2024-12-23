@@ -1,0 +1,3 @@
+doc_id:int:PK
+name:str
+major:str

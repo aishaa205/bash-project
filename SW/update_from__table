@@ -1,0 +1,127 @@
+#!/usr/bin/bash
+
+
+
+
+array=( `ls` )
+PS3="Please Choose the table you want to update in : "
+
+select choice in ${array[*]}
+do 
+   if [ $REPLY -gt ${#array[*]} ]
+  then 
+    echo $REPLY not in menue
+    continue
+   else
+    table_name=${array[${REPLY}-1]} 2>/dev/null  # array start from 0 f lazem 3l4an my3ml4 delete lly ba3do 
+     echo 'you are now inside '${array[${REPLY}-1]}' table' 
+
+     break 
+   fi
+done
+col_types=$(awk -F: '{print $2}' .$table_name"_metadata" 2> /dev/null)
+col_names=$(awk -F: '{print $1}' .$table_name"_metadata" 2> /dev/null)
+names=($col_names)
+types=($col_types)
+
+
+echo "Column Names: $col_names"
+echo "Column Types: $col_types"
+echo "Names Array: ${names[@]}"
+echo "Types Array: ${types[@]}"
+echo "Number of Names: ${#names[@]}"
+# select row as an option
+
+row=()
+echo $row
+num_lines=$(wc -l <  $table_name)  
+#echo $num_lines
+
+read -p "Enter the word you want to change: " input_old
+read -p "Enter the word you want to change to (new input): " input_new
+
+
+old_input_array=$(grep -n "$input_old" "$table_name") # kol el rows ely feha el input
+
+
+# Check if no matches are found
+if [[ -z "$old_input_array" ]]
+then
+    echo "The word '$input_old' is not found in the table '$table_name'."
+    exit
+fi
+
+
+
+# store file henna to search feh
+for ((i=1; i<=$num_lines; i++))
+do
+  row=$(sed -n "$i p" $table_name)
+  # Check 
+  if [[ $row =~ $input_old ]]
+  then
+    old_input_array+=("$row")
+    row_number=$i # 3l4an y3raf hy8yar f row kam
+  fi
+done
+
+echo old input array ${old_input_array[@]}
+
+
+# cas law el kelma m4 mawgoda f el table aslan
+if [ ${#old_input_array[@]} -eq 0 ] # # lenght of array
+then
+  echo "the word'$input_old' is not found in the table '$table_name'"
+else
+  # law el kelma mawgoda f row wa7ed bs
+  if [ ${#old_input_array[@]} -eq 1 ]
+  then
+    echo "Row: ${old_input_array[0]}"
+
+      new_row=${old_input_array[0]//$input_old/$input_new} 
+      echo "new row $new_row "
+      sed -i "$row_number s/.*/$new_row/" $table_name
+      echo " updated successfully"
+    # law akter mn row feh el kelma 
+  else
+    echo "more than one row found"
+    for ((i=0; i<${#old_input_array[@]}; i++))
+    do
+      echo "$((i+1)). ${old_input_array[$i]}"
+    done
+     # law 3ayz y8yar kol el rows ely 3ando 
+    read -p "Do you want to change all rows (y/n)? : " answer
+    if [ "$answer" == "y" ]
+    then
+      for ((i=0; i<${#old_input_array[@]}; i++))
+      do
+        row_number=$((i+1))
+        echo "row_number $row_number"
+        echo "new row $new_row "
+        new_row=${old_input_array[$i]//$input_old/$input_new}
+        sed -i "$row_number s/.*/$new_row/" $table_name
+      done
+      echo "All $input_old updated successfully to $input_new"
+    elif [ "$answer" == "n" ]
+    then
+      select row in "${old_input_array[@]}"
+      do
+        if [ $REPLY -gt ${#old_input_array[@]} ]
+         then
+          echo "$REPLY not in menu"
+           continue
+        else
+          selected_row=${old_input_array[$REPLY-1]} # subtract 1 to get the correct index
+          echo "$selected_row"
+          new_row=$selected_row
+          new_row=${new_row//$input_old/$input_new}
+          sed -i "1,$num_lines s|^$selected_row|$new_row|" $table_name
+          echo "Row changed successfully"
+          break
+        fi
+        done
+    else
+      echo "wrong answer please eneter vailid answer"
+    fi
+  fi
+fi

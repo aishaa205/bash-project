@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+
+zenity --info --title "List DB" --text "Listing existing databases..."
+
+
+#echo "----------list the existing database-----------------------"
+ 
+
+ cd ../DATA_BASE_CREATED
+
+#store f el variable da 3l4an 22dr 23rado as list in one column 
+
+ database_list=$(ls -F | grep / | tr / " ")
+
+ # Create a GUI dialog box with a list of databases
+echo "$database_list" | zenity --list --title "List DB" --text "Select a database:" --column "Databases" --print-column=1   $database_list
+#--separator=" " 3l4an ya3raf en maben kol space w el tanya fe element 
+ 
+ cd -  2> /dev/null

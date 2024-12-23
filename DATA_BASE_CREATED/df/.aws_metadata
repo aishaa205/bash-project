@@ -1,0 +1,4 @@
+PK:id:
+name:str
+passwd:int
+key:str

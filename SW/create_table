@@ -1,0 +1,178 @@
+#!/usr/bin/bash
+
+
+
+
+ 
+# list existing tables 
+
+echo "........existing tables........"
+
+ls -s
+
+#handel paRT LMa by5las yrga3 feen !!!!!!!!!!!!!!!!!
+# matnse4 case can't start with speical character!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+# create table 
+while true 
+do
+   read -p "enter name of table you want to create:"  table_name
+
+  case $table_name in
+  "" )
+   echo "table name can't be empty"
+   continue
+   ;;
+   #condition da m4 48al kways 8er f el nos bs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+  *[[:space:]] | *[[:space:]]* | [[:space:]]*   )
+    echo "table name can't contain space"
+    continue
+   ;;
+  [0-9]* )
+    echo "table name can't start with number"
+    continue
+   ;;
+   # 3ayza a5leha 2 cases speaical char w elba2y 
+ *[a-zA-Z]*[a-zA-Z_0-9] | [a-zA-Z_])
+    if [ -e $table_name ] 
+	then
+	  echo  table already exist
+	  continue    
+	else
+	
+      touch $table_name
+	fi 
+	  echo the table created successfully 
+      break
+	;;
+   * )
+   echo invaled table name
+   continue
+   ;;
+  esac
+done
+
+
+
+########### create columns inside table ######################
+
+while true 
+do 
+  read -p "please enter columns number to be created: " numCol
+
+  case $numCol in 
+  *[0])
+    echo number of columns cannot be zero 
+	continue
+	;;
+  *[1-9] | *[1-9]*[0-9] )
+     echo your table will have $numCol columns 
+	   for ((i=1;i<=$numCol;i++))
+	   do
+		    line=""
+		    read -p "please enter $i column name: (note your first column will be primary key)" colName
+           while true 
+           do 
+           case $colName in
+           "")
+              echo "column name can't be empty"
+              continue
+              ;; 
+              #condition da m4 48al kways 8er f el nos bs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+           *[[:space:]] | *[[:space:]]* | [[:space:]]*   )
+                echo "column name can't contain space"
+                continue
+                 ;;  
+           [0-9]* )
+               echo "column name can't start with number"
+                continue
+                ;;  
+                 
+          	  	# 3ayza a5leha 2 cases speaical char w elba2y 
+            *[a-zA-Z]*[a-zA-Z_0-9] | [a-zA-Z_]) 
+                  if [ $i -eq 1 ]
+                  then
+                      # hathabet en first col hwa pk  
+                             line+=$colName:
+                             while true 
+                                  do
+                                  read -p "please enter $i column Datatype (int/str): " colType
+                                  case $colType in
+                                   "")
+                                     echo "Datatype for column $i can't be empty"
+                                     continue
+                                     ;;
+                                    "str" | "int"  )
+                                        line+=$colType":PK" 
+                                        break
+                                        ;;
+                                    *)
+                                        echo invailid data type for column
+                                        continue
+                                        ;;
+                                  esac
+                                  done      
+
+                  else 
+                           ##########################Mahtag ytzabat m4 48aaalllaaaa################################### 
+                          if ( find $colName `head -1 $table_name` 2> /dev/null ) 
+                 	        then  
+                                  echo culomn name $colName is already exist 
+                                  continue
+                          else        
+                                 line+=$colName:
+                                 
+                                  while true 
+                                  do
+                                  read -p "please enter $i column Datatype (int/str): " colType
+                                  case $colType in
+                                   "")
+                                     echo "Datatype for column $i can't be empty"
+                                     continue
+                                     ;;
+                                    "str" | "int"  )
+                                        line+=$colType 
+                                        break
+                                        ;;
+                                    *)
+                                        echo invailid data type for column
+                                        continue
+                                        ;;
+                                  esac
+                                  done      
+                                 
+                          fi
+                  fi
+                 # .for hidden file
+                 echo $line >> .$table_name"_metadata" 
+                 echo meta data file created sucsfully 
+
+
+
+                 
+                   
+                break;;
+               
+            * )
+                 echo "column name is invalid"
+                 continue
+                 ;;
+           esac 
+           done
+            
+      done
+       
+		    
+      break
+      ;;
+  * )
+     echo invalid input for column name
+	continue
+	;;
+  esac
+  
+done
+
+
+
+
+  

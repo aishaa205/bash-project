@@ -1,0 +1,52 @@
+#!/usr/bin/bash
+ 
+ # mo4kla m4 byrda y choose el number akter mn mara 
+
+while true
+do
+
+# Create a GUI dialog box with a list of options
+  CHOICE=$(zenity --list --title "Database Options" --text "Please choose an option" --column "Options" --print-column=1 "Create DB" "List DB" "Connect DB" "Drop DB" "Exit")
+
+ if [ -z "$CHOICE" ]; then
+    echo "Exiting..."
+    break
+  fi
+
+ echo please chose an option 
+
+select choice in creatre_db list_db connect_db drop_db exit
+do 
+
+if [ -n "$choice" ]; then
+ case $choice in 
+  creatre_db )
+  # source to run in same terminal
+     source ./create_db
+     ;;
+  list_db )
+    source ./list_db
+     ;;
+  connect_db )
+    source ./connect_db 
+     ;;
+     
+  drop_db )    
+    source ./drop_db
+    ;;
+   exit )    
+     exit
+    ;;
+    * )
+    echo invalid input .....
+    ;;  
+ esac
+
+ fi
+done       
+
+
+
+
+
+done

@@ -1,0 +1,60 @@
+#!/usr/bin/bash
+
+#change prompet shell 
+
+# PS3="type the dataset number to connect with :" 
+
+echo  select the number of database you want to connect with from menu : 
+
+cd ../DATA_BASE_CREATED
+
+array=(`ls -F | grep / | tr / " "`)
+
+select num_db in ${array[*]}
+do 
+  if [ $REPLY -gt ${#array[*]} ]
+  then 
+    echo $REPLY not in menue
+    continue
+   else
+     cd ../DATA_BASE_CREATED/${array[${REPLY}-1]}
+     echo the database is connected successfuly
+     break 
+   fi
+done     
+
+
+#when user connect to db he can do those options
+echo  "please choose what do you want to do in tables"
+select table_db in  create_tb list_tb insert_tb drop_tb  select_from_tb delete_from_tb update_from_tb  exit
+do 
+case $table_db in
+ create_tb )
+ source ../../SW/create_table  
+ ;;
+ list_tb ) 
+  source ../../SW/list_table
+ ;;
+ insert_tb )
+  source ../../SW/insert_table
+ ;;
+ drop_tb )
+  source ../../SW/drop_table
+ ;;
+ select_from_tb )
+  source ../../SW/select_from_table
+ ;;
+ delete_from_tb )
+  source ../../SW/delete_from_table
+ ;;
+ update_from_tb )
+   source ../../SW/update_from__table
+ ;;
+ exit)
+ #feh error 3ayzeeen nhandeloooo 
+    source ../../SW/db  
+    ;;
+ esac
+done
+
+ cd -  2> /dev/null

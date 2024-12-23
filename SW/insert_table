@@ -1,0 +1,172 @@
+#!/usr/bin/bash
+
+##leh btzhar f el delete
+echo "choose table you want to insert in "
+
+array=( `ls` )
+
+select choice in ${array[*]}
+do 
+   if [ $REPLY -gt ${#array[*]} ]
+  then 
+    echo $REPLY not in menue
+    continue
+   else
+     table_name=${array[${REPLY}-1]} 2> /dev/null # array start from 0 f lazem 3l4an my3ml4 delete lly ba3do 
+     echo 'you arre now inside '${array[${REPLY}-1]}' table' 
+
+     break 
+   fi
+done
+
+############checking if meta data file exists#########################
+# metadata_file=$(find . -name ".$table_name"_metadata""  2>/dev/null)
+# if [[ -z $metadata_file ]]; then
+#     echo "Metadata file not found!"
+#     exit 1
+# else
+#     echo "Metadata file found: $metadata_file"
+# fi
+
+# if ( find . -name ".$table_name"_metadata"" &>= ../../dev/null )
+# then
+#     metadata_file=.$table_name"_metadata"   
+#     echo metadata file found
+# else 
+#      echo the metadata file not found
+# fi     
+
+
+
+# if [[ ! -f .$table_name"_metadata" || ! -s .$table_name"_metadata" ]];
+# then
+#     echo "Metadata file for $table_name is missing or empty."
+#     exit 1
+# fi
+
+
+
+###########################################################
+col_types=$(awk -F: '{print $2}' ./"."$table_name"_metadata" 2> /dev/null)
+col_names=$(awk -F: '{print $1}' ./"."$table_name"_metadata" 2> /dev/null)
+names=($col_names)
+types=($col_types)
+
+echo "Column Names: $col_names"
+echo "Column Types: $col_types"
+echo "Names Array: ${names[@]}"
+echo "Types Array: ${types[@]}"
+echo "Number of Names: ${#names[@]}"
+
+if [[ ${#names[@]} -eq 0 ]]; then
+    echo "No column names found in metadata."
+    exit 1
+fi
+
+# no need 5las grep 7altha #
+# PK_array=()
+# if [[ -f $table_name ]]
+# then
+#     PK_array=$(awk -F: '{print $1}' $table_name )
+# fi
+# echo pk  `echo $PK_array`
+
+
+
+
+
+
+
+while true 
+do 
+    echo "Insert values in the following order:"
+    row=""
+    
+    for ((i = 0; i < ${#names[@]}; i++))
+    do
+        while true
+        do
+            read -p "Enter value for ${names[i]} that has type (${types[i]}): " value
+            
+            
+            if [[ -z $value ]]
+            then
+                echo "Value can't be empty."
+                continue
+            fi
+            
+            
+            if [[ ${types[i]} == 'int' ]]
+            then
+                if [[ $value =~ ^[0-9]+$ ]]
+                then
+                    if [[ $i -eq 0 ]]
+                    then
+
+                        
+                        if grep -q "^$value:" "$table_name"
+                         then
+                             echo "primary key $value already exists in table $table_name."
+                             continue
+                        else
+                             row+="$value:"
+                             break
+                        fi
+                    else
+                        row+="$value:"
+                        break
+                    fi
+                else
+                    echo "value must be an integer."
+                    continue
+                fi
+            fi
+            
+            
+            
+            if [[ ${types[i]} == 'str' ]]
+            then 
+                    if [[ $i -eq 0 ]]
+                then
+                   
+                   #3l4an 2t2ked en el input ely hyd5alo m4 mtkrar
+                    if grep -q "^$value:" "$table_name"
+                    then
+                        echo "Primary key $value already exists in table $table_name."
+                        continue
+                    else
+                        row+="$value:"
+                        break
+                    fi
+                else
+                    row+="$value:"
+                    break
+                fi
+               
+            fi
+
+            echo "Invalid value type for ${names[i]}."
+        done
+    done
+   
+    row=${row%:}
+    echo "$row" >> $table_name 2>/dev/null     
+    echo "Row inserted successfully into $table_name."
+    
+   
+
+   PK_array+=" $row"
+   PK_array=${PK_array%% *}
+
+   ########################--------------------######################
+    read -p "Do you want to insert another row? (yes/no): " check
+         if [[ "no" == $check ]]
+         then
+        	break
+          fi
+done
+
+
+
+
+
