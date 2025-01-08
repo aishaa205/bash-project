@@ -1,8 +1,6 @@
 #!/usr/bin/bash
 
 
-
-
  
 # list existing tables 
 
@@ -11,40 +9,65 @@ echo "........existing tables........"
 ls -s
 
 #handel paRT LMa by5las yrga3 feen !!!!!!!!!!!!!!!!!
-# matnse4 case can't start with speical character!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 # create table 
 while true 
 do
-   read -p "enter name of table you want to create:"  table_name
+     
+
+   table_name=$(zenity --entry --title="Table Name" --text="enter name of table you want to create:")
+
+
+    if [ $? -eq 1 ]
+    then
+        exit 0
+    fi
+
+   #read -p "enter name of table you want to create:"  table_name
 
   case $table_name in
   "" )
+   # lma zawedt gui mabt4t8l4  
+   #################################################################################################################################################
+   zenity --error --text="table name can't be empty"
    echo "table name can't be empty"
    continue
    ;;
    #condition da m4 48al kways 8er f el nos bs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
   *[[:space:]] | *[[:space:]]* | [[:space:]]*   )
+
+    zenity --error --text="table name can't contain space"
     echo "table name can't contain space"
     continue
    ;;
   [0-9]* )
+
+    zenity --error --text="table name can't start with number"
     echo "table name can't start with number"
     continue
    ;;
+ [!a-zA-Z0-9_]*)
+    zenity --error --text="table name can't contain special characters."
+    echo "table name can't contain special characters."
+    continue
+    ;;  
    # 3ayza a5leha 2 cases speaical char w elba2y 
  *[a-zA-Z]*[a-zA-Z_0-9] | [a-zA-Z_])
     if [ -e $table_name ] 
 	then
+      zenity --error --text="table already exist"
 	  echo  table already exist
 	  continue    
 	else
 	
       touch $table_name
-	fi 
-	  echo the table created successfully 
+      zenity --info --text="the table created successfully "
+      echo the table created successfully 
       break
+	fi 
+	 
 	;;
    * )
+   zenity --error --text="invaled table name"
    echo invaled table name
    continue
    ;;
@@ -57,36 +80,61 @@ done
 
 while true 
 do 
-  read -p "please enter columns number to be created: " numCol
+  #####33333
+  numCol=$(zenity --entry --title="Number Columns" --text="please enter Number of Columns to be created:")
+
+  #read -p "please enter Number of Columns to be created: " numCol
 
   case $numCol in 
   *[0])
+
+    zenity --error --text="number of columns cannot be zero"
     echo number of columns cannot be zero 
 	continue
 	;;
   *[1-9] | *[1-9]*[0-9] )
+
+     zenity --info --text="your table will have $numCol columns"
      echo your table will have $numCol columns 
+
+
+
 	   for ((i=1;i<=$numCol;i++))
 	   do
 		    line=""
-		    read -p "please enter $i column name: (note your first column will be primary key)" colName
+		    
            while true 
            do 
+
+
+           ##########
+           colName=$(zenity --entry --title="Columns Name" --text="please enter $i column name: (note your first column will be primary key):")
+           # read -p "please enter $i column name: (note your first column will be primary key)" colName
+
+
+
            case $colName in
            "")
+              zenity --error --text="column name can't be empty"
               echo "column name can't be empty"
               continue
               ;; 
               #condition da m4 48al kways 8er f el nos bs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
            *[[:space:]] | *[[:space:]]* | [[:space:]]*   )
+                zenity --error --text="column name can't contain space"
                 echo "column name can't contain space"
                 continue
                  ;;  
            [0-9]* )
+               zenity --error --text="column name can't start with number"
                echo "column name can't start with number"
                 continue
                 ;;  
-                 
+            [!a-zA-Z0-9_]*)
+                zenity --error --text="table name can't contain special characters."
+                echo "table name can't contain special characters."
+                continue
+                ;;    
           	  	# 3ayza a5leha 2 cases speaical char w elba2y 
             *[a-zA-Z]*[a-zA-Z_0-9] | [a-zA-Z_]) 
                   if [ $i -eq 1 ]
@@ -95,9 +143,14 @@ do
                              line+=$colName:
                              while true 
                                   do
-                                  read -p "please enter $i column Datatype (int/str): " colType
+
+                                  #######
+                                   colType=$(zenity --entry --title="Columns Type" --text="please enter $i column Datatype (int/str): ")
+           
+                                  #read -p "please enter $i column Datatype (int/str): " colType
                                   case $colType in
                                    "")
+                                     zenity --error --text="Datatype for column $i can't be empty"
                                      echo "Datatype for column $i can't be empty"
                                      continue
                                      ;;
@@ -106,6 +159,7 @@ do
                                         break
                                         ;;
                                     *)
+                                        zenity --error --text="invailid data type for column"
                                         echo invailid data type for column
                                         continue
                                         ;;
@@ -114,8 +168,9 @@ do
 
                   else 
                            ##########################Mahtag ytzabat m4 48aaalllaaaa################################### 
-                          if ( find $colName `head -1 $table_name` 2> /dev/null ) 
+                          if  (grep -q "^$colName:" .$table_name"_metadata" ) 
                  	        then  
+                                  zenity --error --text="culomn name $colName is already exist "
                                   echo culomn name $colName is already exist 
                                   continue
                           else        
@@ -123,9 +178,14 @@ do
                                  
                                   while true 
                                   do
-                                  read -p "please enter $i column Datatype (int/str): " colType
+
+
+                                  #######
+                                  colType=$(zenity --entry --title="Columns Type" --text="please enter $i column Datatype (int/str): ")
+                                  #read -p "please enter $i column Datatype (int/str): " colType
                                   case $colType in
                                    "")
+                                     zenity --error --text="Datatype for column $i can't be empty"
                                      echo "Datatype for column $i can't be empty"
                                      continue
                                      ;;
@@ -134,6 +194,7 @@ do
                                         break
                                         ;;
                                     *)
+                                        zenity --error --text="invailid data type for column"
                                         echo invailid data type for column
                                         continue
                                         ;;
@@ -144,6 +205,7 @@ do
                   fi
                  # .for hidden file
                  echo $line >> .$table_name"_metadata" 
+                 zenity --info --text="meta data file created sucsfully "
                  echo meta data file created sucsfully 
 
 
@@ -153,6 +215,8 @@ do
                 break;;
                
             * )
+
+                 zenity --error --text="column name is invalid"
                  echo "column name is invalid"
                  continue
                  ;;
@@ -165,14 +229,11 @@ do
       break
       ;;
   * )
+
+     zenity --error --text="invalid input for column name"
      echo invalid input for column name
 	continue
 	;;
   esac
   
-done
-
-
-
-
-  
+done 

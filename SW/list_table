@@ -3,7 +3,11 @@
 
 echo ===============exsist tables===============
 
-ls
+tables_list=$(ls)
+
+
+zenity --list --title "List of Tables" --text "Select table:" --column "tables" --print-column=1   $tables_list
+ 
 #case check i no tables if exsist may redirect to another place 
 
 #   if (`ls` == null )

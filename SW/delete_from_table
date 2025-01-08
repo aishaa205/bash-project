@@ -5,19 +5,31 @@ echo  Please Choose the table  to delete from
 
 array=( `ls` )
 
-select choice in ${array[*]}
-do 
-   if [ $REPLY -gt ${#array[*]} ]
-  then 
-    echo $REPLY not in menue
-    continue
-   else
-    table_name=${array[${REPLY}-1]} 2>/dev/null  # array start from 0 f lazem 3l4an my3ml4 delete lly ba3do 
-     echo 'you are now inside '${array[${REPLY}-1]}' table' 
 
-     break 
-   fi
-done
+choice=$(zenity --list --title="Choose Table to Insert" --text="Select a table to insert:" --column="Tables" "${array[@]}")
+
+if [ $? -eq 1 ]; then
+  exit 0
+fi
+
+
+table_name=$choice
+zenity --info --text="You are now inside $table_name table"
+
+# m4 ha7tagha de law input number
+# select choice in ${array[*]}
+# do 
+#    if [ $REPLY -gt ${#array[*]} ]
+#   then 
+#     echo $REPLY not in menue
+#     continue
+#    else
+#     table_name=${array[${REPLY}-1]} 2>/dev/null  # array start from 0 f lazem 3l4an my3ml4 delete lly ba3do 
+#      echo 'you are now inside '${array[${REPLY}-1]}' table' 
+
+#      break 
+#    fi
+# done
 
 
 col_types=$(awk -F: '{print $2}' .$table_name"_metadata" 2> /dev/null)
@@ -44,57 +56,94 @@ done
 
 
 
+options=("delete all table"  "delete specific column"  "delete by id" "back to connect menu") 
 
-select de_choice in delete_all_table  delete_specific_column  delete_by_id  exit
-do 
+
+de_choice=$(zenity --list --title="delete select " --text="please select otion of delete " --column="Operation" --print-column=1 "${options[@]}")
+         
+
+if [ $? -eq 1 ]; then
+  exit 0
+fi
+
+#select de_choice in delete_all_table  delete_specific_column  delete_by_id  exit
+#do 
 case $de_choice in
-delete_all_table )
+"delete all table" )
     #  -s option for size 0 =0 bytes
     truncate -s 0 $table_name 
+
+    zenity --info --text="the table content deleted successfully"
     echo the table content deleted successfully
+    break
     ;;
-delete_specific_column  )
+"delete specific column"  )
+        col_delete=$(zenity --list --title="Delete Column" --text="Choose the column to delete:" --column="Columns" "${names[@]}")
+        echo "Please choose the column to delete:"
 
-          echo "Please choose the column to delete:"
-    select col_delete in "${names[@]}"
-    do
-        if [ $REPLY -gt ${#names[@]} ]
-        then
-            echo "$REPLY not in menu"
-            continue
-        else
-            col_index=$REPLY # index bta3 el col
-            for ((i=1; i<=$num_lines; i++))
-            do
-                line=$(sed -n "$i p" $table_name)
-                # Split the line into an array
-                IFS=: read -r -a line_array <<< "$line"
+        # 3l4an law eluser e5tar cancel
+            if [ $? -eq 1 ]
+            then
+               exit 0
+            fi
 
-                # Replace the column value with an empty string
-                line_array[$col_index-1]=""
+
+  
+         
+
+
+    # select col_delete in "${names[@]}"
+    # do
+    #     if [ $REPLY -gt ${#names[@]} ]
+    #     then
+    #          zenity --error --text="$REPLY not in menu"
+    #         echo "$REPLY not in menu"
+    #         continue
+    #     else
+    #         col_index=$REPLY # index bta3 el col
+    #         for ((i=1; i<=$num_lines; i++))
+    #         do
+    #             line=$(sed -n "$i p" $table_name)
+    #             # Split the line into an array
+    #             IFS=: read -r -a line_array <<< "$line"
+
+    #             # Replace the column value with an empty string
+    #             line_array[$col_index-1]=""
     
-                # Join the array back into a line
-                new_line=$(IFS=:; echo "${line_array[*]}")
+    #             # Join the array back into a line
+    #             new_line=$(IFS=:; echo "${line_array[*]}")
 
-                # Replace the original line with the new line
-                sed -i "$i s/.*/$new_line/" $table_name
-            done
-
-            echo "Column $col_delete deleted successfully"
-            break
-        fi
-    done
+    #             # Replace the original line with the new line
+    #             sed -i "$i s/.*/$new_line/" $table_name
+    #         done
+    #         zenity --info --text="Column $col_delete deleted successfully"
+    #         echo "Column $col_delete deleted successfully"
+    #         break
+    #     fi
+    # done
     
      ;;
-delete_by_id)
-    read -p "input the id of the row you want to delete : " id
+"delete by id")
+
+     id=$(zenity --entry --title="Delete by ID" --text="Enter the ID of the row you want to delete:")
+     
+     # 3l4an law eluser e5tar cancel
+            if [ $? -eq 1 ]
+            then
+               exit 0
+            fi
+
+
+    #read -p "input the id of the row you want to delete : " id
     sed -i "/^$id/d" $table_name
+    zenity --info --text="the row with is $id deleted sussufully"
     echo "the row with is $id deleted sussufully"
+    break
     ;;
 
-exit )
+"back to connect menu" )
     #feh error 3ayzeeen nhandeloooo 
     source ../../SW/connect_db   
     ;;      
 esac
-done
+#done

@@ -2,59 +2,95 @@
 
 #change prompet shell 
 
-# PS3="type the dataset number to connect with :" 
 
-echo  select the number of database you want to connect with from menu : 
+
+echo  select database you want to connect with from menu : 
 
 cd ../DATA_BASE_CREATED
 
+
+
 array=(`ls -F | grep / | tr / " "`)
 
-select num_db in ${array[*]}
-do 
-  if [ $REPLY -gt ${#array[*]} ]
-  then 
-    echo $REPLY not in menue
-    continue
-   else
-     cd ../DATA_BASE_CREATED/${array[${REPLY}-1]}
-     echo the database is connected successfuly
-     break 
-   fi
-done     
+#${array[@]} 3l4an y3raf y loop 3la el array kolha mn 8erha hyb2a b display awel wa7da bs
+num_db=$(zenity --list --title="Select Database" --text="select database you want to connect with" --column="Database"  --print-column=1  ${array[@]})
 
 
-#when user connect to db he can do those options
-echo  "please choose what do you want to do in tables"
-select table_db in  create_tb list_tb insert_tb drop_tb  select_from_tb delete_from_tb update_from_tb  exit
-do 
-case $table_db in
- create_tb )
- source ../../SW/create_table  
- ;;
- list_tb ) 
-  source ../../SW/list_table
- ;;
- insert_tb )
-  source ../../SW/insert_table
- ;;
- drop_tb )
-  source ../../SW/drop_table
- ;;
- select_from_tb )
-  source ../../SW/select_from_table
- ;;
- delete_from_tb )
-  source ../../SW/delete_from_table
- ;;
- update_from_tb )
-   source ../../SW/update_from__table
- ;;
- exit)
- #feh error 3ayzeeen nhandeloooo 
-    source ../../SW/db  
-    ;;
- esac
-done
 
+
+#el part da mab2th4 mahtagah 48al f el code el 3ady el gui m4 mahtagah 
+# azon f el gui mafe4 posibility eno y5tar haga bara l2ano b y click m4 b enter number 
+# select num_db in ${array[*]}
+# do 
+#   if [ $REPLY -gt ${#array[*]} ]
+#   then 
+#     echo $REPLY not in menue
+#     continue
+#    else
+#      cd ../DATA_BASE_CREATED/${array[${REPLY}-1]}
+#      echo the database is connected successfuly
+#      break 
+#    fi
+# done     
+
+
+
+#echo  "please choose what do you want to do in tables"
+
+#
+
+
+if [ -n "$num_db" ]; then
+  cd ../DATA_BASE_CREATED/$num_db
+  zenity --info --text="database $num_db is connected successfully"
+
+
+
+    options=("create_tb" "list_tb" "insert_tb" "drop_tb" "select_from_tb" "delete_from_tb" "update_from_tb" "back to main menu") 
+
+
+
+
+    while true
+    do
+       table_db=$(zenity --list --title="Select Table " --text="please select table " --column="Operation" --print-column=1 "${options[@]}")
+         
+            # 3l4an law eluser e5tar cancel
+            if [ $? -eq 1 ]
+            then
+               exit 0
+            fi
+        #select table_db in  create_tb list_tb insert_tb drop_tb  select_from_tb delete_from_tb update_from_tb  exit
+        #do 
+      case $table_db in
+      "create_tb" )
+         source ../../SW/create_table  
+         ;;
+      "list_tb" ) 
+         source ../../SW/list_table
+         ;;
+      "insert_tb" )
+         source ../../SW/insert_table
+          ;;
+      "drop_tb" )
+         source ../../SW/drop_table
+         ;;
+      "select_from_tb" )
+         source ../../SW/select_from_table
+         ;;
+      "delete_from_tb" )
+        source ../../SW/delete_from_table
+        ;;
+      "update_from_tb" )
+        source ../../SW/update_from__table
+        ;;
+      "back to main menu")
+       #feh error 3ayzeeen nhandeloooo 
+       source ../../SW/db  
+       ;;
+      esac
+     #done
+    done 
+
+fi
  cd -  2> /dev/null

@@ -1,52 +1,64 @@
 #!/usr/bin/bash
  
  # mo4kla m4 byrda y choose el number akter mn mara 
+ #note zenity elchoice bta3o text "exit" m4 zy el select case el3adya
+ # wana b navigate to terminal 3andy 2 choices 
+ # 1-same terminal , 2- another terminal 
+ #same sahla source w 5las 
+ # another use  gnome-terminal -- ./script.sh kda 
+ 
 
-while true
-do
+#while true
+#do
+    
+ # hena type --list bya5od el options w y3melha store f choice 
 
-# Create a GUI dialog box with a list of options
-  CHOICE=$(zenity --list --title "Database Options" --text "Please choose an option" --column "Options" --print-column=1 "Create DB" "List DB" "Connect DB" "Drop DB" "Exit")
+  choice=$(zenity --list --title "AISHA Database Options" --text "Please choose an option" --column "options" --print-column=1 "creatre_db" "list_db" "connect_db" "drop_db" "Exit")
 
- if [ -z "$CHOICE" ]; then
-    echo "Exiting..."
-    break
+  if [ -z "$choice" ]
+  then
+    #3l4an law das 3la exit y5rog 
+    exit 0
   fi
+  
+         #echo please chose an option 
 
- echo please chose an option 
+     # select choice in creatre_db list_db connect_db drop_db 
+      #do 
 
-select choice in creatre_db list_db connect_db drop_db exit
-do 
-
-if [ -n "$choice" ]; then
- case $choice in 
-  creatre_db )
-  # source to run in same terminal
-     source ./create_db
-     ;;
-  list_db )
-    source ./list_db
-     ;;
-  connect_db )
-    source ./connect_db 
-     ;;
+  #if [ -n "$choice" ]
+  #then
+          case $choice in 
+            "creatre_db" )
+             # source to run in same terminal
+             source ./create_db
+             ;;
+            "list_db" )
+              source ./list_db
+              ;;
+            "connect_db" )
+              source ./connect_db 
+              ;;
      
-  drop_db )    
-    source ./drop_db
-    ;;
-   exit )    
-     exit
-    ;;
-    * )
-    echo invalid input .....
-    ;;  
- esac
+            "drop_db" )    
+               source ./drop_db
+               ;;
+            "Exit" )
+              # da kda ana mkraraha mara mn el cancel w mara mn choice exit 
+               exit 0
+               ;;   
+            * )
+              #3l4an law el user da5al e5tar option 8lat display error
+              # m4 ha7tagha hena bs 5alyha 3l4an aftkerha momken a7tagha 2dam 
+              zenity --error --text "Invalid option selected. Please try again."
+              # echo invalid input .....
+             ;;  
+          esac
+  
+       #done       
+       #fi
+  
+  
 
- fi
-done       
-
-
-
-
-
-done
+  #fi 
+#done

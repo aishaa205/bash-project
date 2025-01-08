@@ -5,22 +5,54 @@
 
 ## e
 #PS3="Choose the table you want to drop :"
-echo  Please Choose the table you want to drop 
+#echo  Please Choose the table you want to drop 
 
 array=( `ls` )
 
-select choice in ${array[*]}
-do 
-   if [ $REPLY -gt ${#array[*]} ]
-  then 
-    echo $REPLY not in menue
-    continue
-   else   
+
+
+choice=$(zenity --list --title="choose table to Drop" --text="Select table to drop:" --column="Databases" "${array[@]}")
+
+
+if [ $? -eq 1 ]; then
+  exit 0
+fi
+
+
+
+
+# select choice in ${array[*]}
+# do 
+#    if [ $REPLY -gt ${#array[*]} ]
+#   then 
+#     echo $REPLY not in menue
+#     continue
+#    else   
      
-     rm -r ${array[${REPLY}-1]} # array start from 0 f lazem 3l4an my3ml4 delete lly ba3do 
-     rm -r .${array[${REPLY}-1]}_metadata
+#      rm -r ${array[${REPLY}-1]} # array start from 0 f lazem 3l4an my3ml4 delete lly ba3do 
+#      rm -r .${array[${REPLY}-1]}_metadata
      
-     echo the table is deleted successfully
-     break 
-   fi
-done
+#      echo the table is deleted successfully
+#      break 
+#    fi
+# done
+
+
+
+
+if zenity --question --text="Are you sure you want drop $choice?"
+then
+  rm -r "$choice"
+  rm -r  ."$choice"_metadata
+  zenity --info --text="Table $choice has been dropped successfully."
+  echo "Table is dropped successfully"
+else
+  zenity --info --text="Drop cancelled."
+fi
+
+
+
+
+
+
+
